@@ -9,28 +9,70 @@
 import UIKit
 import Parse
 
-class LoginViewController: UIViewController {
-
+class LoginViewController: UIViewController{
+  
+    
+    @IBOutlet weak var emailText: UITextField!
+    @IBOutlet weak var passwordText: UITextField!
+    
+    
+    
+    
+    var user: PFUser?
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         // Do any additional setup after loading the view.
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    
+    @IBAction func signUp(sender: AnyObject) {
+        user = PFUser()
+        user!.username = emailText.text
+        user!.password = passwordText.text
+        user!.email = emailText.text
+        
+        //user["phone"] = 415-392-0202
+        //aznd13@hotmail.com
+        
+        user!.signUpInBackgroundWithBlock {
+            (succeeded: Bool, error: NSError?) -> Void in
+            if let error = error {
+                let errorString = error.userInfo["error"] as? NSString
+                print(error)
+            }else{
+                // No error use app
+            }
+        }
+        
     }
-    */
-
+    
+    @IBAction func login(sender: AnyObject) {
+        print(user)
+        PFUser.logInWithUsernameInBackground(user!.username!, password:user!.password!) {
+            (user: PFUser?, error: NSError?) -> Void in
+            if user != nil {
+                // Do stuff after successful login.
+                self.performSegueWithIdentifier("login", sender: self)
+                
+                
+            } else {
+                // The login failed. Check error to see why.
+            }
+        }
+        
+    }
+    /*override func performSegueWithIdentifier(identifier: String, sender: AnyObject?) {
+    
+    presentViewController(chatVC, animated: true, completion: nil)
+    }*/
+    
 }
